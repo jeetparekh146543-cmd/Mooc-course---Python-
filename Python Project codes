@@ -1,0 +1,303 @@
+Build a User Configuration Manager :-
+
+
+def add_setting(settings, setting):
+    key, value = setting
+    key = key.lower()
+    value = value.lower()
+
+    if key in settings:
+        return f"Setting '{key}' already exists! Cannot add a new setting with this name."
+
+    settings[key] = value
+    return f"Setting '{key}' added with value '{value}' successfully!"
+
+
+def update_setting(settings, setting):
+    key, value = setting
+    key = key.lower()
+    value = value.lower()
+
+    if key in settings:
+        settings[key] = value
+        return f"Setting '{key}' updated to '{value}' successfully!"
+
+    return f"Setting '{key}' does not exist! Cannot update a non-existing setting."
+
+
+def delete_setting(settings, key):
+    key = key.lower()
+
+    if key in settings:
+        del settings[key]
+        return f"Setting '{key}' deleted successfully!"
+
+    return "Setting not found!"
+
+
+def view_settings(settings):
+    if not settings:
+        return "No settings available."
+
+    result = "Current User Settings:\n"
+
+    for key, value in settings.items():
+        result += f"{key.capitalize()}: {value}\n"
+
+    return result
+
+
+# Test dictionary
+test_settings = {
+    "theme": "dark",
+    "language": "english",
+    "notifications": "enabled"
+}
+
+
+
+
+Build a Budget App :- 
+
+class Category:
+    def __init__(self, name):
+        self.name = name
+        self.ledger = []
+
+    def deposit(self, amount, description=""):
+        self.ledger.append({
+            "amount": amount,
+            "description": description
+        })
+
+    def withdraw(self, amount, description=""):
+        if self.check_funds(amount):
+            self.ledger.append({
+                "amount": -amount,
+                "description": description
+            })
+            return True
+        return False
+
+    def get_balance(self):
+        total = 0
+        for item in self.ledger:
+            total += item["amount"]
+        return total
+
+    def transfer(self, amount, category):
+        if self.check_funds(amount):
+            self.withdraw(amount, f"Transfer to {category.name}")
+            category.deposit(amount, f"Transfer from {self.name}")
+            return True
+        return False
+
+    def check_funds(self, amount):
+        return amount <= self.get_balance()
+
+    def __str__(self):
+        result = "*" * ((30 - len(self.name)) // 2)
+        result += self.name
+        result += "*" * (30 - len(result))
+
+        for item in self.ledger:
+            description = item["description"][:23]
+            amount = f"{item['amount']:.2f}"
+            result += f"\n{description:<23}{amount:>7}"
+
+        result += f"\nTotal: {self.get_balance():.2f}"
+        return result
+
+
+def create_spend_chart(categories):
+    result = "Percentage spent by category\n"
+
+    total_spent = 0
+    category_spending = []
+
+    for category in categories:
+        spent = 0
+
+        for item in category.ledger:
+            if item["amount"] < 0:
+                spent += -item["amount"]
+
+        category_spending.append(spent)
+        total_spent += spent
+
+    percentages = []
+
+    for spent in category_spending:
+        percentage = int((spent / total_spent) * 100)
+        percentage = (percentage // 10) * 10
+        percentages.append(percentage)
+
+    # Chart bars
+    for level in range(100, -1, -10):
+        result += f"{level:>3}|"
+
+        for percentage in percentages:
+            if percentage >= level:
+                result += " o "
+            else:
+                result += "   "
+
+        result += " \n"
+
+    # Horizontal line
+    result += "    " + "-" * (3 * len(categories) + 1) + "\n"
+
+    # Category names vertically
+    max_length = max(len(category.name) for category in categories)
+
+    for i in range(max_length):
+        result += "     "
+
+        for category in categories:
+            if i < len(category.name):
+                result += category.name[i] + "  "
+            else:
+                result += "   "
+
+        if i < max_length - 1:
+            result += "\n"
+
+    return result
+
+
+
+Build a Polygon Area Calculator :- 
+
+
+import math
+
+
+class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def set_width(self, width):
+        self.width = width
+
+    def set_height(self, height):
+        self.height = height
+
+    def get_area(self):
+        return self.width * self.height
+
+    def get_perimeter(self):
+        return 2 * (self.width + self.height)
+
+    def get_diagonal(self):
+        return math.sqrt(self.width ** 2 + self.height ** 2)
+
+    def get_picture(self):
+        if self.width > 50 or self.height > 50:
+            return "Too big for picture."
+
+        picture = ""
+        for _ in range(self.height):
+            picture += "*" * self.width + "\n"
+
+        return picture
+
+    def get_amount_inside(self, shape):
+        width_times = self.width // shape.width
+        height_times = self.height // shape.height
+
+        return width_times * height_times
+
+    def __str__(self):
+        return f"Rectangle(width={self.width}, height={self.height})"
+
+
+class Square(Rectangle):
+    def __init__(self, side):
+        self.width = side
+        self.height = side
+
+    def set_width(self, side):
+        self.width = side
+        self.height = side
+
+    def set_height(self, side):
+        self.width = side
+        self.height = side
+
+    def set_side(self, side):
+        self.width = side
+        self.height = side
+
+    def __str__(self):
+        return f"Square(side={self.width})"
+
+
+Build a Hash Table :- 
+
+
+class HashTable:
+    def __init__(self):
+        self.collection = {}
+
+    def hash(self, string):
+        return sum(ord(char) for char in string)
+
+    def add(self, key, value):
+        index = self.hash(key)
+
+        if index not in self.collection:
+            self.collection[index] = {}
+
+        self.collection[index][key] = value
+
+    def remove(self, key):
+        index = self.hash(key)
+
+        if index in self.collection and key in self.collection[index]:
+            del self.collection[index][key]
+
+            # Remove empty nested dictionary
+            if not self.collection[index]:
+                del self.collection[index]
+
+    def lookup(self, key):
+        index = self.hash(key)
+
+        if index in self.collection and key in self.collection[index]:
+            return self.collection[index][key]
+
+        return None
+
+
+
+
+Implement the Tower of Hanoi Algorithm :-
+
+
+def hanoi_solver(n):
+    rods = [list(range(n, 0, -1)), [], []]
+    moves = []
+
+    def record():
+        moves.append(
+            f"{rods[0]} {rods[1]} {rods[2]}"
+        )
+
+    record()
+
+    def move_disks(count, source, target, auxiliary):
+        if count == 0:
+            return
+
+        move_disks(count - 1, source, auxiliary, target)
+
+        disk = rods[source].pop()
+        rods[target].append(disk)
+        record()
+
+        move_disks(count - 1, auxiliary, target, source)
+
+    move_disks(n, 0, 2, 1)
+
+    return "\n".join(moves)
